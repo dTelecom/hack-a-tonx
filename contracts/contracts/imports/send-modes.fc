@@ -1,0 +1,9 @@
+;; modes
+const NORMAL = 0;
+const CARRY_REMAINING_VALUE = 64;
+const CARRY_REMAINING_BALANCE = 128;
+
+;; flags
+const PAY_FEES_SEPARATELY = 1;
+const IGNORE_ERRORS = 2;
+const DESTROY_IF_ZERO = 32;

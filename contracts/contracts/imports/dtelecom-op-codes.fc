@@ -1,0 +1,22 @@
+;; Master contract
+int op::withdraw() asm "0x348a7a82 PUSHINT";
+int op::create_user() asm "0x2b2cf99c PUSHINT";
+int op::create_node() asm "0x706425c3 PUSHINT";
+int op::process_end_call() asm "0x271e723 PUSHINT";
+
+;; User wallet
+int op::user__set_public_key() asm "0x6e0fc9a4 PUSHINT";
+int op::user__create_call() asm "0x30c588fa PUSHINT";
+int op::user__end_call() asm "0x7a8efe57 PUSHINT";
+
+;; Node wallet
+int op::node__set_host() asm "0x3223c524 PUSHINT";
+int op::node__withdraw() asm "0x3f6e74 PUSHINT";
+int op::node__create_call() asm "0xf3672d9 PUSHINT";
+int op::node__end_call() asm "0x2c2c9c5e PUSHINT";
+
+;; create call flow
+;; node user (has private key) -> node wallet -> dtelecom node wallet -> dtelecom user wallet
+
+;; end call flow
+;; node user (has private key) -> node wallet -> dtelecom node wallet -> dtelecom master -> dtelecom user wallet

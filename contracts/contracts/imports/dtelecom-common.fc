@@ -1,0 +1,1 @@
+int staked_amount() asm "1000000000 PUSHINT"; ;; 1 TON

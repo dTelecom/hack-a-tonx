@@ -1,0 +1,209 @@
+#include "imports/stdlib.fc";
+#include "imports/params.fc";
+#include "imports/send-modes.fc";
+#include "imports/dtelecom-utils.fc";
+#include "imports/dtelecom-op-codes.fc";
+#include "imports/dtelecom-common.fc";
+
+int min_gas_amount() asm "100000000 PUSHINT"; ;; 0.1 TON
+int minute_price() asm "10000000 PUSHINT"; ;; 0.01 TON
+
+(cell, slice, cell, cell) load_data() inline {
+    slice ds = get_data().begin_parse();
+    return (
+        ds~load_dict(),     ;; nodes
+        ds~load_msg_addr(), ;; owner_address
+        ds~load_ref(),      ;; user_wallet_code
+        ds~load_ref()       ;; node_wallet_code
+    );
+}
+
+() save_data(cell nodes, slice owner_address, cell user_wallet_code, cell node_wallet_code) impure inline {
+    set_data(begin_cell()
+            .store_dict(nodes)
+            .store_slice(owner_address)
+            .store_ref(user_wallet_code)
+            .store_ref(node_wallet_code)
+            .end_cell()
+    );
+}
+
+() withdraw(int query_id, slice sender_address, int amount) impure {
+    ~dump(11);
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    throw_unless(707, equal_slices(owner_address, sender_address));
+
+    int balance = get_balance().pair_first();
+
+    int mode = CARRY_REMAINING_VALUE;
+    if (amount > balance) {
+        ~dump(100);
+        amount = 0;
+        mode = CARRY_REMAINING_BALANCE;
+    }
+
+    var msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(owner_address)
+            .store_coins(amount)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
+    send_raw_message(msg.end_cell(), mode);
+}
+
+() create_user(int query_id, slice sender_address, int public_key) impure {
+    ~dump(12);
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+
+    cell state_init = calculate_user_wallet_state_init(sender_address, my_address(), node_wallet_code, user_wallet_code);
+    slice user_wallet_address = calculate_wallet_address(state_init);
+    
+    var msg_body = begin_cell()
+            .store_uint(op::user__set_public_key(), 32)
+            .store_uint(query_id, 64)
+            .store_uint(public_key, 256)
+            .end_cell();
+    var msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(user_wallet_address)
+            .store_coins(0)
+            .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+            .store_ref(state_init)
+            .store_ref(msg_body);
+    send_raw_message(msg.end_cell(), CARRY_REMAINING_VALUE);
+}
+
+() create_node(int query_id, slice sender_address, slice node_host) impure {
+    ~dump(13);
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    
+    var node_info = begin_cell()
+        .store_uint(slice_bits(node_host) / 8, 8)
+        .store_slice(node_host);
+    int success? = nodes~udict_add_builder?(256, string_hash(node_host), node_info);
+    throw_unless(131, success?);
+
+    cell state_init = calculate_node_wallet_state_init(sender_address, my_address(), user_wallet_code, node_wallet_code);
+    slice node_wallet_address = calculate_wallet_address(state_init);
+    
+    var msg_body = begin_cell()
+            .store_uint(op::node__set_host(), 32)
+            .store_uint(query_id, 64)
+            .store_uint(slice_bits(node_host) / 8, 8)
+            .store_slice(node_host)
+            .end_cell();
+    var msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(node_wallet_address)
+            .store_coins(0)
+            .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+            .store_ref(state_init)
+            .store_ref(msg_body);
+    send_raw_message(msg.end_cell(), CARRY_REMAINING_VALUE);
+
+    save_data(nodes, owner_address, user_wallet_code, node_wallet_code);
+}
+
+() process_end_call(slice sender_address, int query_id, slice node_owner_address, slice user_address, cell user_signed_msg) impure {
+    ~dump(14);
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    throw_unless(73, equal_slices(sender_address, calculate_node_wallet_address(node_owner_address, my_address(), user_wallet_code, node_wallet_code)));
+
+    var msg_body = begin_cell()
+                    .store_uint(op::user__end_call(), 32)
+                    .store_uint(query_id, 64)
+                    .store_grams(minute_price())
+                    .store_slice(sender_address) ;; node_address
+                    .store_slice(node_owner_address)
+                    .store_ref(user_signed_msg)
+                    .end_cell();
+    var msg = begin_cell()
+                .store_uint(0x18, 6)
+                .store_slice(calculate_user_wallet_address(user_address, my_address(), node_wallet_code, user_wallet_code))
+                .store_coins(0)
+                .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(msg_body);
+    send_raw_message(msg.end_cell(), CARRY_REMAINING_VALUE);
+}
+
+() recv_internal(int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    ~dump(1);
+    if (in_msg_body.slice_empty?()) { ;; ignore empty messages
+        return ();
+    }
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+
+    if (flags & 1) { ;; ignore all bounced messages
+        return ();
+    }
+    slice sender_address = cs~load_msg_addr();
+
+    int op = in_msg_body~load_uint(32);
+    int query_id = in_msg_body~load_uint(64);
+
+    if (op == op::withdraw()) {
+        int amount = in_msg_body~load_coins();
+
+        withdraw(query_id, sender_address, amount);
+
+        return ();
+    }
+
+    if (op == op::create_user()) {
+        int public_key = in_msg_body~load_uint(256);
+
+        create_user(query_id, sender_address, public_key);
+
+        return ();
+    }
+
+    if (op == op::create_node()) {
+        throw_unless(73, msg_value >= staked_amount() + min_gas_amount());
+        
+        int node_host_length = in_msg_body~load_uint(8);
+        slice node_host = in_msg_body~load_bits(node_host_length * 8);
+
+        create_node(query_id, sender_address, node_host);
+
+        return ();
+    }
+
+    if (op == op::process_end_call()) {
+        slice node_owner_address = in_msg_body~load_msg_addr();
+        slice user_address = in_msg_body~load_msg_addr();
+        cell user_signed_msg = in_msg_body~load_ref();
+
+        process_end_call(sender_address, query_id, node_owner_address, user_address, user_signed_msg);
+
+        return ();
+    }
+}
+
+(slice) get_dtelecom_data() method_id {
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    return (owner_address);
+}
+
+slice get_user_wallet_address(slice user_address) method_id {
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    return calculate_user_wallet_address(user_address, my_address(), node_wallet_code, user_wallet_code);
+}
+
+slice get_node_wallet_address(slice node_address) method_id {
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    return calculate_node_wallet_address(node_address, my_address(), user_wallet_code, node_wallet_code);
+}
+
+tuple get_node_hosts_list() method_id {
+    var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
+    var list = null();
+    do {
+        var (_, node_host, f) = nodes~udict::delete_get_min(256);
+        if (f) {
+            int node_host_length = node_host~load_uint(8);
+            slice node_host_str = node_host~load_bits(node_host_length * 8);
+            list = cons(node_host_str, list);
+        }
+    } until (~ f);
+    return list;
+}
