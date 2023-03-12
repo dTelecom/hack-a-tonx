@@ -1,0 +1,9 @@
+gopath/
+/pkg/
+main
+.idea
+.DS_store
+*.privkey
+*.exp
+deploy.sh
+.env
