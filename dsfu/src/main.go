@@ -152,15 +152,11 @@ func main() {
 	}
 
 	var bootstrapNodes []maddr.Multiaddr
-	addr1, _ := maddr.NewMultiaddr("/ip4/51.38.127.87/tcp/6666/p2p/12D3KooWKnWnr17igEvjcGZthmH1bw2xD1UHMiF2SyV5FrxmfKKf")
-	addr2, _ := maddr.NewMultiaddr("/ip4/51.75.160.227/tcp/6666/p2p/12D3KooWHAC8NKnnpkRPMB1Au8cGCZzjd3aM4FG8xypcYY6dKbNE")
-	addr3, _ := maddr.NewMultiaddr("/ip4/144.217.89.48/tcp/6666/p2p/12D3KooWNcC1MqUMicfuRuffF5jJf7vYtr2hAjtnsC3eZ3wPftnt")
-	addr4, _ := maddr.NewMultiaddr("/ip4/15.235.197.130/tcp/6666/p2p/12D3KooWBD5uspad1KXGsEJVWdxnyGrBQxsAqsV7cL8ibi59pbA1")
+	addr1, _ := maddr.NewMultiaddr("/ip4/51.38.127.87/tcp/6666/p2p/12D3KooWSYhTs8ykMDMDwdVc1gKb6EuSvWYCwFQaP2HyWezvqwQe")
+	addr2, _ := maddr.NewMultiaddr("/ip4/51.75.160.227/tcp/6666/p2p/12D3KooWJzHpvL2bzcruPenptg6BrrnHjfk79LABE7Ju5qYjEA8q")
 
 	bootstrapNodes = append(bootstrapNodes, addr1)
 	bootstrapNodes = append(bootstrapNodes, addr2)
-	bootstrapNodes = append(bootstrapNodes, addr3)
-	bootstrapNodes = append(bootstrapNodes, addr4)
 
 	if err := n.Bootstrap(ctx, bootstrapNodes); err != nil {
 		log.Error().Err(err).Msg("bootstrap")
