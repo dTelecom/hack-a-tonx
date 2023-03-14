@@ -1,0 +1,219 @@
+.container {
+	width: 100%;
+	height: 100vh;
+
+	@supports (-webkit-touch-callout: none) {
+		height: -webkit-fill-available;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.headerControls {
+	> div {
+		display: none;
+	}
+
+	@media (min-width: 900px) {
+		> div {
+			display: flex;
+		}
+	}
+
+	.inviteButton {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background: #0088CC;
+		color: #FFFFFF;
+		height: 40px;
+		border-radius: 40px;
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 17px;
+		padding: 0 16px;
+		width: 161px;
+
+		&:disabled {
+			opacity: 0.5;
+		}
+	}
+
+	.inviteButtonMobile {
+		width: 40px;
+		height: 40px;
+		background: #252728;
+		border-radius: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&:disabled {
+			opacity: 0.5;
+		}
+	}
+}
+
+.callContainer {
+	flex: 1;
+
+	@media (max-width: 899px) {
+		height: calc(100% - 72px - 48px);
+	}
+
+	@media (min-width: 900px) {
+		max-height: calc(100% - 96px - 65px);
+	}
+}
+
+.callContentContainer {
+	position: relative;
+	@media (max-width: 899px) {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.videoContainer {
+	width: 100%;
+	height: calc(100% - 120px);
+}
+
+.streamContainer {
+	background: #252728;
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+
+	video {
+		position: absolute;
+		inset: 0;
+		object-fit: cover;
+
+		@media (min-width: 900px) {
+			object-fit: initial;
+			position: relative;
+		}
+		z-index: 1;
+		border-radius: 10px;
+		width: 100%;
+		height: 100%;
+	}
+
+	.streamPlaceholder {
+		width: 25%;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.messageOverlay {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		height: 100px;
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
+		transition: opacity 200ms linear;
+
+		@media (min-width: 900px) {
+			height: 150px;
+		}
+	}
+
+	.message {
+		z-index: 1;
+		color: #FFFFFF;
+		position: absolute;
+		left: 16px;
+		right: 16px;
+		bottom: 12px;
+		font-weight: 500;
+		font-size: 12px;
+		line-height: 15px;
+		width: calc(100% - 32px);
+		text-align: left;
+
+		@media (min-width: 900px) {
+			max-width: calc(100% - 250px);
+			font-size: 16px;
+			line-height: 19px;
+			left: initial;
+			right: 32px;
+			bottom: 16px;
+		}
+	}
+
+	.badge {
+		z-index: 1;
+		position: absolute;
+		left: 8px;
+		top: 8px;
+		background: rgba(2, 5, 46, 0.7);
+		border-radius: 40px;
+		display: flex;
+		align-items: center;
+		height: 20px;
+		padding: 0 8px;
+		gap: 4px;
+		font-weight: 600;
+		font-size: 10px;
+		line-height: 12px;
+		white-space: nowrap;
+
+		img {
+			height: 12px;
+		}
+
+		@media (min-width: 900px) {
+			top: initial;
+			left: 16px;
+			bottom: 16px;
+			height: 41px;
+			font-weight: 700;
+			font-size: 14px;
+			line-height: 17px;
+			padding: 0 16px;
+			gap: 8px;
+
+			img {
+				height: initial;
+			}
+		}
+	}
+
+	.controlsBox {
+		z-index: 1;
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		display: flex;
+		height: 16px;
+		gap: 4px;
+		width: 36px;
+		justify-content: flex-end;
+
+		@media (min-width: 900px) {
+			width: auto;
+			top: 16px;
+			right: 16px;
+			height: 40px;
+			gap: 8px;
+		}
+	}
+}
+
+.videoControls {
+	@media (max-width: 899px) {
+
+	}
+
+	padding: 24px 0;
+
+	@media (min-width: 900px) {
+		padding: 40px 0;
+	}
+}

@@ -1,0 +1,40 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	max-width: 266px;
+	padding: 10px 10px 24px;
+	box-sizing: border-box;
+	align-items: center;
+	border: 1.22695px solid #252728;
+	border-radius: 6.13475px;
+
+	img {
+		width: 100%;
+		margin-bottom: 16px;
+
+		@media (min-width: 900px) {
+			margin-bottom: 24px;
+		}
+	}
+
+	p {
+		margin-bottom: 16px;
+		font-size: 14px;
+		line-height: 17px;
+		text-align: center;
+		color: #555555;
+
+		@media (min-width: 900px) {
+			margin-bottom: 24px;
+		}
+	}
+
+	.button {
+		width: 160px;
+		height: 48px;
+
+		@media (min-width: 900px) {
+			height: 56px;
+		}
+	}
+}

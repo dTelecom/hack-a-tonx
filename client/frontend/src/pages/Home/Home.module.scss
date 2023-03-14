@@ -1,0 +1,141 @@
+.container {
+	flex-direction: column-reverse;
+	gap: 40px;
+	margin-top: 24px;
+	margin-bottom: 40px;
+	min-height: fit-content;
+
+	@media (min-width: 900px) {
+		margin-top: 64px;
+		flex-direction: row;
+		gap: 70px;
+	}
+
+	@media (min-width: 1366px) {
+		gap: 140px;
+	}
+
+}
+
+.title {
+	font-weight: 700;
+	font-size: 36px;
+	line-height: 44px;
+	text-align: center;
+	max-width: 260px;
+	margin: 0 auto;
+}
+
+.videoContainer {
+	border: 2px solid #252728;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: auto;
+	box-sizing: border-box;
+	padding: 12px 12px 24px;
+
+	@media (min-width: 900px) {
+		max-width: initial;
+		min-width: initial;
+		width: 728px;
+		max-height: 568px;
+		padding: 24px 24px 32px;
+	}
+
+	> div:first-child {
+		width: 100%;
+		position: relative;
+		overflow: hidden;
+		flex: 1;
+		border-radius: 10px;
+		aspect-ratio: 318/220;
+
+		@media (min-width: 900px) {
+			aspect-ratio: initial;
+		}
+
+		video {
+			border-radius: 10px;
+			min-width: 100%;
+			min-height: 100%;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	.videoControls {
+		width: fit-content;
+		margin: 16px auto 0;
+
+		@media (min-width: 900px) {
+			padding-top: 32px;
+			margin: auto auto 0;
+		}
+	}
+}
+
+.joinContainer {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	padding-left: 0;
+	margin: 0 auto;
+
+	@media (min-width: 900px) {
+		margin: 0;
+		max-width: 420px;
+	}
+
+	.buttonContainer {
+		height: 52px;
+
+		@media (min-width: 900px) {
+			height: 72px;
+		}
+	}
+
+	.text {
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+		white-space: pre;
+		width: fit-content;
+	}
+
+	.greyText {
+		color: #D5D4D8;
+	}
+
+	.inviteText {
+		display: flex;
+		align-items: center;
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+		gap: 8px;
+		width: 100%;
+		height: 32px;
+		margin-top: 24px;
+		justify-content: center;
+
+		@media (min-width: 900px) {
+			margin-top: 32px;
+			justify-content: initial;
+		}
+
+		span {
+			color: #D5D4D8;
+		}
+	}
+
+	.label, .text, .inviteText {
+		text-align: center;
+
+		@media (min-width: 900px) {
+			text-align: left;
+		}
+	}
+}
