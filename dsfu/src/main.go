@@ -152,8 +152,8 @@ func main() {
 	}
 
 	var bootstrapNodes []maddr.Multiaddr
-	addr1, _ := maddr.NewMultiaddr("/ip4/51.38.127.87/tcp/6666/p2p/12D3KooWSYhTs8ykMDMDwdVc1gKb6EuSvWYCwFQaP2HyWezvqwQe")
-	addr2, _ := maddr.NewMultiaddr("/ip4/51.75.160.227/tcp/6666/p2p/12D3KooWJzHpvL2bzcruPenptg6BrrnHjfk79LABE7Ju5qYjEA8q")
+	addr1, _ := maddr.NewMultiaddr("/ip4/141.95.127.30/tcp/6666/p2p/12D3KooWR5szoBtZEb7VJnD6ize6EjPNbt1Lo7YytCDW5EjV8Zae")
+	addr2, _ := maddr.NewMultiaddr("/ip4/51.195.202.15/tcp/6666/p2p/12D3KooWCviAPtTK2Tjkdgxagg6ek6sp7mg1ZTX6N6WhMmHvd55K")
 
 	bootstrapNodes = append(bootstrapNodes, addr1)
 	bootstrapNodes = append(bootstrapNodes, addr2)
