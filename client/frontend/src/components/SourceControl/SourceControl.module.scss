@@ -5,6 +5,11 @@
 	cursor: pointer;
 	display: flex;
 	align-items: center;
+	box-sizing: border-box;
+
+	@media (min-width: 900px) {
+		padding: 0 8px;
+	}
 
 	.iconButton {
 		width: 32px;
@@ -13,11 +18,17 @@
 		&:first-child {
 			justify-content: right;
 			padding-right: 4px;
+			@media (min-width: 900px) {
+				padding-right: 8px;
+			}
 		}
 
 		&:nth-child(3) {
 			justify-content: left;
 			padding-left: 4px;
+			@media (min-width: 900px) {
+				padding-left: 8px;
+			}
 		}
 	}
 
