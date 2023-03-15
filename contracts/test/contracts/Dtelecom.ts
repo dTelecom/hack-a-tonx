@@ -65,16 +65,16 @@ export class Dtelecom implements Contract {
 
     async sendCreateNode(provider: ContractProvider, via: Sender, params: {
         value: bigint,
+        publicKey: bigint,
         nodeHost: string
     }) {
-        const nodeHostBuffer = Buffer.from(params.nodeHost, 'utf8');
         await provider.internal(via, {
             value: params.value,
             body: beginCell()
                 .storeUint(OPS.CreateNode, 32)
                 .storeUint(0, 64) // query_id
-                .storeUint(nodeHostBuffer.byteLength, 8)
-                .storeBuffer(nodeHostBuffer)
+                .storeUint(params.publicKey, 256)
+                .storeStringRefTail(params.nodeHost)
                 .endCell()
         });
     }
@@ -98,13 +98,14 @@ export class Dtelecom implements Contract {
         }
     }
 
-    async getNodeHosts(provider: ContractProvider): Promise<string[]> {
+    async getNodeHosts(provider: ContractProvider): Promise<Map<string, Address>> {
         const { stack } = await provider.get('get_node_hosts_list', [])
 
-        const nodeHosts: string[] = []
+        const nodeHosts = new Map<string, Address>()
         let tuple = stack.readTupleOpt()
         while(tuple !== null) {
-            nodeHosts.push(tuple.readString())
+            const nodeInfo = tuple.readCell().beginParse()
+            nodeHosts.set(nodeInfo.loadStringRefTail(), nodeInfo.loadAddress())
             tuple = tuple.readTupleOpt()
         }
 

@@ -10,7 +10,7 @@ int op::user__create_call() asm "0x30c588fa PUSHINT";
 int op::user__end_call() asm "0x7a8efe57 PUSHINT";
 
 ;; Node wallet
-int op::node__set_host() asm "0x3223c524 PUSHINT";
+int op::node__init() asm "0x3223c524 PUSHINT";
 int op::node__withdraw() asm "0x3f6e74 PUSHINT";
 int op::node__create_call() asm "0xf3672d9 PUSHINT";
 int op::node__end_call() asm "0x2c2c9c5e PUSHINT";

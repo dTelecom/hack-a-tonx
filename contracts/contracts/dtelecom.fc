@@ -72,24 +72,25 @@ int minute_price() asm "10000000 PUSHINT"; ;; 0.01 TON
     send_raw_message(msg.end_cell(), CARRY_REMAINING_VALUE);
 }
 
-() create_node(int query_id, slice sender_address, slice node_host) impure {
+() create_node(int query_id, slice sender_address, int public_key, cell node_host) impure {
     ~dump(13);
+
     var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
-    
-    var node_info = begin_cell()
-        .store_uint(slice_bits(node_host) / 8, 8)
-        .store_slice(node_host);
-    int success? = nodes~udict_add_builder?(256, string_hash(node_host), node_info);
-    throw_unless(131, success?);
 
     cell state_init = calculate_node_wallet_state_init(sender_address, my_address(), user_wallet_code, node_wallet_code);
     slice node_wallet_address = calculate_wallet_address(state_init);
-    
+
+    var node_info = begin_cell()
+        .store_ref(node_host)
+        .store_slice(node_wallet_address);
+    int success? = nodes~udict_add_builder?(256, cell_hash(node_host), node_info);
+    throw_unless(131, success?);
+
     var msg_body = begin_cell()
-            .store_uint(op::node__set_host(), 32)
+            .store_uint(op::node__init(), 32)
             .store_uint(query_id, 64)
-            .store_uint(slice_bits(node_host) / 8, 8)
-            .store_slice(node_host)
+            .store_uint(public_key, 256)
+            .store_ref(node_host)
             .end_cell();
     var msg = begin_cell()
             .store_uint(0x18, 6)
@@ -160,10 +161,10 @@ int minute_price() asm "10000000 PUSHINT"; ;; 0.01 TON
     if (op == op::create_node()) {
         throw_unless(73, msg_value >= staked_amount() + min_gas_amount());
         
-        int node_host_length = in_msg_body~load_uint(8);
-        slice node_host = in_msg_body~load_bits(node_host_length * 8);
+        int public_key = in_msg_body~load_uint(256);
+        cell node_host = in_msg_body~load_ref();
 
-        create_node(query_id, sender_address, node_host);
+        create_node(query_id, sender_address, public_key, node_host);
 
         return ();
     }
@@ -198,11 +199,10 @@ tuple get_node_hosts_list() method_id {
     var (nodes, owner_address, user_wallet_code, node_wallet_code) = load_data();
     var list = null();
     do {
-        var (_, node_host, f) = nodes~udict::delete_get_min(256);
+        var (_, node_info, f) = nodes~udict::delete_get_min(256);
         if (f) {
-            int node_host_length = node_host~load_uint(8);
-            slice node_host_str = node_host~load_bits(node_host_length * 8);
-            list = cons(node_host_str, list);
+            ;; var node_host = node_info~load_ref();
+            list = cons(node_info, list);
         }
     } until (~ f);
     return list;

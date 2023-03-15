@@ -9,11 +9,12 @@ cell pack_user_wallet_data(int public_key, cell calls, slice owner_address, slic
             .end_cell();
 }
 
-cell pack_node_wallet_data(slice node_host, slice owner_address, slice master_address, cell user_wallet_code, cell node_wallet_code) inline {
-  int node_host_len_in_bits = slice_bits(node_host);
+cell pack_node_wallet_data(int public_key, cell node_host, slice owner_address, slice master_address, cell user_wallet_code, cell node_wallet_code) inline {
+    ~dump(slice_bits(owner_address));
+    ~dump(slice_bits(master_address));
     return begin_cell()
-            .store_uint(node_host_len_in_bits / 8, 8)
-            .store_slice(node_host)
+            .store_uint(public_key, 256)
+            .store_ref(node_host)
             .store_slice(owner_address)
             .store_slice(master_address)
             .store_ref(user_wallet_code)
@@ -36,7 +37,7 @@ cell calculate_node_wallet_state_init(slice owner_address, slice master_address,
     return begin_cell()
             .store_uint(0, 2)
             .store_dict(node_wallet_code)
-            .store_dict(pack_node_wallet_data("", owner_address, master_address, user_wallet_code, node_wallet_code))
+            .store_dict(pack_node_wallet_data(0, begin_cell().end_cell(), owner_address, master_address, user_wallet_code, node_wallet_code))
             .store_uint(0, 1)
             .end_cell();
 }

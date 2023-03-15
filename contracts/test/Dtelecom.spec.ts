@@ -77,23 +77,40 @@ describe('Dtelecom', () => {
         // test create node
         // <<<<<<<<<<<<<<<<
         let nodeHosts = await dtelecom.getNodeHosts()
-        expect(nodeHosts).toHaveLength(0)
+        expect(nodeHosts.size).toBe(0)
 
+        const nodeHost = 'wss://super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.super-long-hostname.dtelecom.org/ws';
+
+        const nodePublicKey = BigInt(`0x${node.keypair.publicKey.toString('hex')}`)
         await dtelecom.sendCreateNode(node.getSender(), {
             value: toNano('20.1'),
-            nodeHost: 'dtelecom.org'
+            publicKey: nodePublicKey,
+            nodeHost: nodeHost
         })
         const nodeWalletAddress = await dtelecom.getNodeWalletAddress(node.address)
         const nodeWallet = blkch.openContract(new NodeWallet(nodeWalletAddress))
         let nodeWalletData = await nodeWallet.getData()
         expect(nodeWalletData.contractBalance).toBeGreaterThanOrEqual(toNano('20.0'))
         expect(nodeWalletData.contractBalance).toBeLessThan(toNano('20.1'))
+        expect(nodeWalletData.publicKey).toBe(nodePublicKey)
         expect(nodeWalletData.owner.toString()).toBe(node.address.toString())
         expect(nodeWalletData.master.toString()).toBe(dtelecom.address.toString())
 
         nodeHosts = await dtelecom.getNodeHosts()
-        expect(nodeHosts).toHaveLength(1)
-        expect(nodeHosts).toContain('dtelecom.org')
+        expect(nodeHosts.size).toBe(1)
+        expect(nodeHosts.has(nodeHost)).toBeTruthy()
+        expect(nodeHosts.get(nodeHost)?.toString()).toBe(nodeWalletAddress.toString())
+
+        await dtelecom.sendCreateNode(node.getSender(), {
+            value: toNano('1.1'),
+            publicKey: nodePublicKey,
+            nodeHost: 'dtelecom.org'
+        })
+
+        nodeHosts = await dtelecom.getNodeHosts()
+        expect(nodeHosts.size).toBe(2)
+        expect(nodeHosts.has('dtelecom.org')).toBeTruthy()
+        expect(nodeHosts.get('dtelecom.org')?.toString()).toBe(nodeWalletAddress.toString())
         // >>>>>>>>>>>>>>>>
 
 

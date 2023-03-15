@@ -11,6 +11,7 @@ enum OPS {
 
 export type NodeWalletData = {
     contractBalance: bigint
+    publicKey: bigint
     nodeHost: string
     owner: Address
     master: Address
@@ -95,6 +96,7 @@ export class NodeWallet implements Contract {
 
         return {
             contractBalance: balance,
+            publicKey: stack.readBigNumber(),
             nodeHost: stack.readString(),
             owner: stack.readAddress(),
             master: stack.readAddress()
