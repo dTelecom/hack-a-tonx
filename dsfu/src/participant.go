@@ -153,7 +153,7 @@ func (p *Participant) Handle(ctx context.Context, conn *jsonrpc2.Conn, req *json
 			}
 		}
 
-		verified := ton.Verify(clientPk, tokenJson, signature)
+		verified := ton.VerifyMessage(clientPk, tokenJson, signature)
 		if verified != true {
 			replyError(fmt.Errorf("not verified signature"))
 			break

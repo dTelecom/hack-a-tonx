@@ -19,3 +19,11 @@ func Verify(publicKey ed25519.PublicKey, message, sig []byte) bool {
 func Sign(privateKey ed25519.PrivateKey, message []byte) []byte {
 	return ed25519.Sign(privateKey, getCellHash(message))
 }
+
+func VerifyMessage(publicKey ed25519.PublicKey, message, sig []byte) bool {
+	return ed25519.Verify(publicKey, message, sig)
+}
+
+func SignMessage(privateKey ed25519.PrivateKey, message []byte) []byte {
+	return ed25519.Sign(privateKey, message)
+}

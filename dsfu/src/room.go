@@ -596,7 +596,7 @@ func (r *Room) NotifyAndTx(participant *Participant, action string) {
 	}
 
 	message := notifyData.CallID + ":" + strconv.Itoa(notifyData.Duration)
-	verified := ton.Verify(r.ClientPk, []byte(message), notifyResponse.Signature)
+	verified := ton.VerifyMessage(r.ClientPk, []byte(message), notifyResponse.Signature)
 	if verified != true {
 		log.Printf("not verified signature")
 		r.EndRoom()

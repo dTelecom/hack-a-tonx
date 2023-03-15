@@ -320,7 +320,7 @@ func callbackRoom(db *gorm.DB) func(echo.Context) error {
 			return c.String(http.StatusNotFound, "")
 		}
 
-		verified := ton.Verify(call.NodePK, notifyRequest.Message, notifyRequest.Signature)
+		verified := ton.VerifyMessage(call.NodePK, notifyRequest.Message, notifyRequest.Signature)
 
 		if verified != true {
 			return c.String(http.StatusBadRequest, "not verified signature")

@@ -51,5 +51,5 @@ func GetSignature(data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return Sign(nodeToncli.wallet.PrivateKey(), data), nil
+	return SignMessage(nodeToncli.wallet.PrivateKey(), data), nil
 }
