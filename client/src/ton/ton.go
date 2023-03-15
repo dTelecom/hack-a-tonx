@@ -20,10 +20,12 @@ func GetNodeURL() (string, string, ed25519.PublicKey, error) {
 		return "", "", pk, err
 	}
 
-	keys := make([]string, len(nodes))
+	keys := make([]string, 1)
 
 	for k := range nodes {
-		keys = append(keys, k)
+		if k != "wss://do-not-use-it.dtelecom.org/ws" {
+			keys = append(keys, k)
+		}
 	}
 
 	randomIndex := rand.Intn(len(keys))
