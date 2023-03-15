@@ -1,0 +1,10 @@
+gopath/
+main
+pkg/
+sqlite3gorm.db
+.idea
+.DS_store
+.env
+tonmeet-backend
+*.exp
+deploy.sh

@@ -57,14 +57,14 @@ type JoinRequest struct {
 
 // Token model
 type Token struct {
-	SID       string `json:"sid"`
-	UID       string `json:"uid"`
-	Name      string `json:"name"`
-	IsHost    bool   `json:"isHost"`
-	Account   string `json:"account"`
-	URL       string `json:"url"`
-	CallID    string `json:"callID"`
-	NoPublish bool   `json:"noPublish"`
+	SID           string `json:"sid"`
+	UID           string `json:"uid"`
+	Name          string `json:"name"`
+	IsHost        bool   `json:"isHost"`
+	ClientAddress string `json:"clientAddress"`
+	URL           string `json:"url"`
+	CallID        string `json:"callID"`
+	NoPublish     bool   `json:"noPublish"`
 }
 
 // WebrtcNegotiation message sent when renegotiating the peer connection
@@ -146,7 +146,7 @@ func (p *Participant) Handle(ctx context.Context, conn *jsonrpc2.Conn, req *json
 		if room != nil {
 			clientPk = room.ClientPk
 		} else {
-			clientPk, err = ton.GetClientPubKey(token.Account)
+			clientPk, err = ton.GetClientPubKey(token.ClientAddress)
 			if err != nil {
 				replyError(err)
 				break
@@ -213,14 +213,14 @@ func (p *Participant) Handle(ctx context.Context, conn *jsonrpc2.Conn, req *json
 
 		if room == nil {
 			room = &Room{
-				SID:         token.SID,
-				Session:     p.Peer.Session(),
-				Node:        p.Node,
-				Account:     token.Account,
-				ClientPk:    clientPk,
-				URL:         token.URL,
-				CallID:      token.CallID,
-				createdChan: make(chan struct{}),
+				SID:           token.SID,
+				Session:       p.Peer.Session(),
+				Node:          p.Node,
+				ClientAddress: token.ClientAddress,
+				ClientPk:      clientPk,
+				URL:           token.URL,
+				CallID:        token.CallID,
+				createdChan:   make(chan struct{}),
 			}
 			Rooms.Store(token.SID, room)
 			err := p.Node.JoinRoom(token.SID, p.Node.ID().Pretty(), room.OnRemoteMessage)

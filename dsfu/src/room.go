@@ -33,7 +33,7 @@ type Room struct {
 	Node                node.Node
 	RemoteViewersCount  sync.Map
 	LocalViewersCount   int
-	Account             string
+	ClientAddress       string
 	ClientPk            ed25519.PublicKey
 	URL                 string
 	CallID              string
@@ -71,13 +71,13 @@ type NotifyData struct {
 
 // NotifyRequest data
 type NotifyRequest struct {
-	Data      []byte `json:"data"`
+	Message   []byte `json:"message"`
 	Signature []byte `json:"signature"`
 }
 
 // NotifyResponse data
 type NotifyResponse struct {
-	Meaasage  []byte `json:"message"`
+	Message   []byte `json:"message"`
 	Signature []byte `json:"signature"`
 	Duration  int    `json:"duration"`
 }
@@ -321,7 +321,7 @@ func (r *Room) Close() {
 
 		log.Printf("end call: %v", r.LastNotifyResponse)
 
-		err := ton.EndCall(r.Account, r.LastNotifyResponse.Signature, r.LastNotifyResponse.Meaasage)
+		err := ton.EndCall(r.ClientAddress, r.LastNotifyResponse.Signature, r.LastNotifyResponse.Message)
 		log.Printf("err: %v", err)
 	}
 }
@@ -514,7 +514,7 @@ func (r *Room) createCall() {
 
 		log.Printf("create call: %v", r.FirstNotifyResponse)
 
-		err := ton.CreateCall(r.Account, r.FirstNotifyResponse.Signature, r.FirstNotifyResponse.Meaasage)
+		err := ton.CreateCall(r.ClientAddress, r.FirstNotifyResponse.Signature, r.FirstNotifyResponse.Message)
 		close(r.createdChan)
 		if err != nil {
 			log.Printf("err: %v", err)
@@ -579,7 +579,7 @@ func (r *Room) NotifyAndTx(participant *Participant, action string) {
 	}
 
 	notifyRequest := NotifyRequest{
-		Data:      j,
+		Message:   j,
 		Signature: sign,
 	}
 
