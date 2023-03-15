@@ -22,7 +22,7 @@ func handleRequest(db *gorm.DB) {
 	e.POST("/api/room/callback", callbackRoom(db))
 	e.POST("/api/room/info", infoRoom(db))
 
-	e.Logger.Fatal(e.Start(":3000"))
+	e.Logger.Fatal(e.Start(":3030"))
 }
 
 func initialMigration(db *gorm.DB) {
