@@ -173,13 +173,13 @@ const Call = () => {
 
   const start = useCallback(async () => {
     try {
-      let url = 'https://app.dmeet.org/api/room/create';
+      let url = 'https://tonmeet.com/api/room/create';
       let data = {name, nonce: localStorage.getItem('nonce')};
 
       if (sid !== undefined) {
         data.sid = sid;
         data.noPublish = noPublish;
-        url = 'https://app.dmeet.org/api/room/join';
+        url = 'https://tonmeet.com/api/room/join';
       } else {
         data.e2ee = useE2ee;
         data.title = location.state?.title;
