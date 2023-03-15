@@ -189,19 +189,6 @@ const Call = () => {
         data.viewerID = location.state?.viewerID === '0' ? '' : location.state?.viewerID;
       }
 
-      if (location.state?.participantID !== '0' || location.state?.viewerID !== '0') {
-        for (let i = 0; i < 10; ++i) {
-          await delay(1000);
-          try {
-            const verifyRes = await axios.post(url + '/verify', data);
-            if (verifyRes.status === 200) {
-              break;
-            }
-          } catch {
-          }
-        }
-      }
-
       const response = await axios.post(url, data);
       const randomServer = response.data.url;
       const parsedSID = response.data.sid;
