@@ -1,0 +1,74 @@
+.container {
+	height: 72px;
+	align-items: center;
+	display: flex;
+	justify-content: space-evenly;
+	padding: 0 24px;
+	width: 100%;
+	box-sizing: border-box;
+	flex-shrink: 0;
+
+	@media (min-width: 900px) {
+		flex-shrink: initial;
+		height: 96px;
+		padding: 0 64px;
+	}
+
+	&.containerCentered {
+		justify-content: center;
+		@media (min-width: 900px) {
+			justify-content: flex-start;
+		}
+	}
+
+	.logoContainer {
+		display: flex;
+
+		img {
+			height: 40px;
+
+			@media (min-width: 900px) {
+				height: 48px;
+			}
+		}
+	}
+
+	.title {
+		font-weight: 700;
+		font-size: 32px;
+		line-height: 39px;
+		text-align: center;
+	}
+
+	.mobileMiniTitle {
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 17px;
+		text-align: center;
+		color: #555555;
+		overflow: hidden;
+		padding: 0 8px;
+
+		span {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+	}
+
+	.controlContainer {
+		display: flex;
+		justify-content: flex-end;
+		width: 100%;
+	}
+}
+
+.mobileTitle {
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 29px;
+	text-align: center;
+	color: #555555;
+	display: block;
+	margin-top: 8px;
+}

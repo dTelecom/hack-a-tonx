@@ -1,0 +1,16 @@
+.checkbox {
+	flex-direction: row-reverse;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+	justify-content: flex-end;
+
+	@media (min-width: 900px) {
+		font-weight: 400;
+		font-size: 24px;
+		line-height: 29px;
+		color: #D5D4D8;
+		justify-content: space-between;
+		width: 100%;
+	}
+}

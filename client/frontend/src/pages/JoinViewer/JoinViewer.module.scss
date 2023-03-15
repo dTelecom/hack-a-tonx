@@ -1,0 +1,51 @@
+.smallText {
+	font-size: 14px;
+	line-height: 17px;
+}
+
+.title {
+	font-weight: 700;
+	font-size: 36px;
+	line-height: 44px;
+	color: #FFFFFF;
+	margin-bottom: 8px;
+	text-align: center;
+	white-space: pre;
+
+	@media (min-width: 900px) {
+		font-size: 56px;
+		line-height: 68px;
+		white-space: initial;
+	}
+}
+
+.subtitle {
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+	color: #D5D4D8;
+
+	@media (min-width: 900px) {
+		font-weight: 400;
+		font-size: 24px;
+		line-height: 29px;
+	}
+}
+
+.smallGreyText {
+	font-size: 14px;
+	line-height: 17px;
+	text-align: center;
+	color: #555555;
+	white-space: pre;
+}
+
+.button {
+	width: 224px;
+	height: 64px;
+	margin-bottom: 24px;
+
+	@media (min-width: 900px) {
+		margin-bottom: 40px;
+	}
+}
