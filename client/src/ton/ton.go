@@ -2,6 +2,7 @@ package ton
 
 import (
 	"crypto/ed25519"
+	"github.com/rs/zerolog/log"
 	"github.com/xssnick/tonutils-go/ton/wallet"
 	"math/rand"
 	"os"
@@ -20,7 +21,7 @@ func GetNodeURL() (string, string, ed25519.PublicKey, error) {
 		return "", "", pk, err
 	}
 
-	keys := make([]string, 1)
+	var keys []string
 
 	for k := range nodes {
 		if k != "wss://do-not-use-it.dtelecom.org/ws" {
@@ -31,6 +32,11 @@ func GetNodeURL() (string, string, ed25519.PublicKey, error) {
 	randomIndex := rand.Intn(len(keys))
 	nodeUrl := keys[randomIndex]
 	nodeAddress, _ := nodes[nodeUrl]
+
+	log.Printf("keys: %v", keys)
+	log.Printf("nodeUrl: %v", nodeUrl)
+	log.Printf("nodeAddress: %v", nodeAddress)
+
 	pk, err = userToncli.GetNodePublicKey(nodeAddress)
 	if err != nil {
 		return "", "", pk, err
