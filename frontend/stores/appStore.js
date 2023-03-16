@@ -12,6 +12,10 @@ class AppStore {
     this.currentUser = currentUser;
   };
 
+  setTonweb = (tonweb) => {
+    this.tonweb = tonweb;
+  }
+
 
   loadStats = async () => {
     this.stats = {

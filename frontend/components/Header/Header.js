@@ -6,17 +6,26 @@ import {observer} from 'mobx-react';
 import {appStore} from '../../stores/appStore';
 import ProfileBadge from '../ProfileBadge/ProfileBadge';
 import classNames from 'classnames';
+import { connector } from '../../connector';
 
 export const Header = observer(({onBack, title}) => {
   const {currentUser} = appStore;
 
-  const signIn = () => {
-    // TODO: sign in
+  const signIn = async () => {
+    const walletsList = await connector.getWallets();
+
+    const tonkeeperConnectionSource = {
+        universalLink: walletsList[0].universalLink,
+        bridgeUrl: walletsList[0].bridgeUrl,
+    };
+
+    const universalLink = connector.connect(tonkeeperConnectionSource);
+    console.log(universalLink);
   };
 
   const signOut = () => {
-    // TODO: sign out
-    appStore.setCurrentUser(undefined);
+    connector.disconnect();
+    // appStore.setCurrentUser(undefined);
   };
 
   return <div className={classNames(styles.container, title && styles.containerWithTitle)}>

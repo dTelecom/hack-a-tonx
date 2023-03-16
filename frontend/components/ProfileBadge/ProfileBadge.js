@@ -3,11 +3,16 @@ import {observer} from 'mobx-react';
 import {ExitIcon, WalletIcon} from '../../assets';
 import {appStore} from '../../stores/appStore';
 import * as styles from './ProfileBadge.module.scss';
+import { CHAIN } from '@tonconnect/sdk';
+// import { Address } from 'ton';
 
 const ProfileBadge = ({signOut}) => {
   const {currentUser} = appStore;
 
-  const shortAccountId = currentUser.accountId.length > 12 ? currentUser.accountId.slice(0, 6) + '...' + currentUser.accountId.slice(-4) : currentUser.accountId;
+//   const userFriendlyAddress = Address.parseRaw(currentUser.account.address).toFriendly({ testOnly: currentUser.account.chain === CHAIN.TESTNET });
+
+//   const shortAccountId = userFriendlyAddress.slice(0, 4) + '...' + userFriendlyAddress.slice(-3);
+  const shortAccountId = currentUser.account.address;
 
   return (
     <div className={styles.badge}>

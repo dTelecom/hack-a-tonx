@@ -1,12 +1,17 @@
 import 'regenerator-runtime/runtime';
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {Route, Routes} from 'react-router-dom';
 import Home from '../frontend/pages/Home/Home';
 import CustomerDashboard from '../frontend/pages/CustomerDashboard/CustomerDashboard';
 import NodeDashboard from '../frontend/pages/NodeDashboard/NodeDashboard';
+import { connector } from './connector';
 
 const App = () => {
+  useEffect(() => {
+    connector.restoreConnection();
+  }, []);
+
   return (
     <Routes>
       <Route
