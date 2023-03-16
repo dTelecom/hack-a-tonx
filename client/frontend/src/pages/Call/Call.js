@@ -254,13 +254,6 @@ const Call = () => {
       _signalLocal.on_notify('muteEvent', onMuteEvent);
       _signalLocal.on_notify('participantsCount', onParticipantsCount);
       _signalLocal.on_notify('onMessage', onMessage);
-      // TODO: test - remove
-      // setTimeout(() => {
-      //   onMessage({
-      //     participant: {uid: localUid.current},
-      //     payload: {message: 'Hi. What’s up? I’ve got a problem with my computer. Can you help me?'}
-      //   });
-      // }, 2000);
     } catch (errors) {
       console.error(errors);
     }
@@ -360,11 +353,25 @@ const Call = () => {
 
   const onMessage = ({participant, payload}) => {
     console.log('[onMessage]', participant, payload);
-    setMessages(prev => ({...prev, [participant.uid]: payload.message}));
-    // TODO: test - remove
-    setTimeout(() => {
+
+    const timeout = setTimeout(() => {
       setMessages(prev => ({...prev, [participant.uid]: undefined}));
     }, 5000);
+
+    setMessages(prev => {
+      const prevMessage = prev[participant.uid];
+      if (prevMessage?.timeout) {
+        clearTimeout(prevMessage.timeout);
+      }
+
+      return {
+        ...prev,
+        [participant.uid]: {
+          message: payload.message,
+          timeout
+        }
+      };
+    });
   };
 
   const onDeviceSelect = useCallback((type, deviceId) => {
@@ -437,7 +444,7 @@ const Call = () => {
                   isCurrentUser={participant.uid === localUid.current}
                   mediaState={mediaState[participant.uid]}
                   subtitlesEnabled={subtitlesEnabled}
-                  message={messages[participant.uid]}
+                  message={messages[participant.uid]?.message}
                 />
               </Box>
             ))}
@@ -454,7 +461,7 @@ const Call = () => {
               isCurrentUser={participant.uid === localUid.current}
               mediaState={mediaState[participant.uid]}
               subtitlesEnabled={subtitlesEnabled}
-              message={messages[participant.uid]}
+              message={messages[participant.uid]?.message}
             />))}
           </PackedGrid>
         )}
