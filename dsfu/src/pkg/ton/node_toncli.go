@@ -99,7 +99,7 @@ func (c *NodeToncli) GetUserContractPublicKey(userAddr string) (ed25519.PublicKe
 }
 
 func (c *NodeToncli) CreateCall(userAddr string, userSign []byte, userMsg []byte) error {
-	log.Printf("CreateCall: %v", c.wallet, userAddr, userSign, userMsg)
+	log.Printf("CreateCall: %v %v %v %v", c.wallet, userAddr, userSign, userMsg)
 	err := c.contract.SendCreateCall(c.wallet, address.MustParseAddr(userAddr), userSign, userMsg)
 	if err != nil {
 		err = fmt.Errorf("SendCreateCall: %w", err)
