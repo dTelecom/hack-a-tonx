@@ -9,6 +9,7 @@ import (
 	"github.com/xssnick/tonutils-go/liteclient"
 	"github.com/xssnick/tonutils-go/ton"
 	"github.com/xssnick/tonutils-go/ton/wallet"
+	"log"
 	"strings"
 )
 
@@ -98,6 +99,7 @@ func (c *NodeToncli) GetUserContractPublicKey(userAddr string) (ed25519.PublicKe
 }
 
 func (c *NodeToncli) CreateCall(userAddr string, userSign []byte, userMsg []byte) error {
+	log.Printf("CreateCall: %v", c.wallet, userAddr, userSign, userMsg)
 	err := c.contract.SendCreateCall(c.wallet, address.MustParseAddr(userAddr), userSign, userMsg)
 	if err != nil {
 		err = fmt.Errorf("SendCreateCall: %w", err)

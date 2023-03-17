@@ -54,3 +54,19 @@ func GetSignature(data []byte) ([]byte, error) {
 
 	return SignMessage(nodeToncli.wallet.PrivateKey(), data), nil
 }
+
+func BuildCreateCallMessage(callId uint64) (msg, sign []byte, err error) {
+	userToncli, err := NewUserToncli(os.Getenv("TON_SEED"), wallet.V4R2, os.Getenv("TON_MASTER_CONTRACT"))
+	if err != nil {
+		return nil, nil, err
+	}
+	return userToncli.BuildCreateCallMessage(callId)
+}
+
+func BuildEndCallMessage(callId uint64, spentMinutes uint32) (msg, sign []byte, err error) {
+	userToncli, err := NewUserToncli(os.Getenv("TON_SEED"), wallet.V4R2, os.Getenv("TON_MASTER_CONTRACT"))
+	if err != nil {
+		return nil, nil, err
+	}
+	return userToncli.BuildEndCallMessage(callId, spentMinutes)
+}

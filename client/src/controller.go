@@ -8,10 +8,10 @@ import (
 	"github.com/labstack/echo"
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog/log"
+	"hash/fnv"
 	"main/ton"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -341,18 +341,35 @@ func callbackRoom(db *gorm.DB) func(echo.Context) error {
 
 		db.Save(&participant)
 
-		message := notifyData.CallID + ":" + strconv.Itoa(notifyData.Duration)
-		sig, err := ton.GetSignature([]byte(message))
-		if err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
-		}
+		h := fnv.New64a()
+		h.Write([]byte(notifyData.CallID))
+		callID := h.Sum64()
 
-		notifyResponse := NotifyResponse{
-			Signature: sig,
-			Message:   []byte(message),
-		}
+		if notifyData.Duration > 0 {
+			var endCallMsg, endCallSign []byte
+			if endCallMsg, endCallSign, err = ton.BuildEndCallMessage(callID, uint32(notifyData.Duration)); err != nil {
+				return c.String(http.StatusBadRequest, err.Error())
+			}
 
-		return c.JSON(http.StatusOK, notifyResponse)
+			notifyResponse := NotifyResponse{
+				Signature: endCallSign,
+				Message:   endCallMsg,
+			}
+
+			return c.JSON(http.StatusOK, notifyResponse)
+		} else {
+			var createCallMsg, createCallSign []byte
+			if createCallMsg, createCallSign, err = ton.BuildCreateCallMessage(callID); err != nil {
+				return c.String(http.StatusBadRequest, err.Error())
+			}
+
+			notifyResponse := NotifyResponse{
+				Signature: createCallSign,
+				Message:   createCallMsg,
+			}
+
+			return c.JSON(http.StatusOK, notifyResponse)
+		}
 	}
 }
 
