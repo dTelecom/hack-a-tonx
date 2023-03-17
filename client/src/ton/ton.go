@@ -6,6 +6,7 @@ import (
 	"github.com/xssnick/tonutils-go/ton/wallet"
 	"math/rand"
 	"os"
+	"strings"
 )
 
 func GetNodeURL() (string, string, ed25519.PublicKey, error) {
@@ -24,7 +25,7 @@ func GetNodeURL() (string, string, ed25519.PublicKey, error) {
 	var keys []string
 
 	for k := range nodes {
-		if k != "wss://do-not-use-it.dtelecom.org/ws" {
+		if strings.HasSuffix(k, "tonmeet.com/ws") {
 			keys = append(keys, k)
 		}
 	}
