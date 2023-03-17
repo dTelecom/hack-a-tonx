@@ -6,30 +6,11 @@ import * as styles from './NodeForm.module.scss';
 import classNames from 'classnames';
 import {observer} from 'mobx-react';
 import {Box} from '@chakra-ui/react';
-import TonWeb from "tonweb";
-
-const readIntFromBitString = (bs, cursor, bits) => {
-    let n = BigInt(0);
-    for (let i = 0; i < bits; i++) {
-        n *= BigInt(2);
-        n += BigInt(bs.get(cursor + i));
-    }
-    return n;
-}
-
-const parseAddress = cell => {
-    let n = readIntFromBitString(cell.bits, 3, 8);
-    if (n > BigInt(127)) {
-        n = n - BigInt(256);
-    }
-    const hashPart = readIntFromBitString(cell.bits, 3 + 8, 256);
-    if (n.toString(10) + ":" + hashPart.toString(16) === '0:0') return null;
-    const s = n.toString(10) + ":" + hashPart.toString(16).padStart(64, '0');
-    return new TonWeb.utils.Address(s);
-};
+import { MasterContract } from '../../MasterContract';
+import { Address } from 'ton';
 
 const NodeForm = () => {
-  const {currentUser, tonweb} = appStore;
+  const {currentUser, tonClient} = appStore;
   const [value, setValue] = useState('');
   const [node, setNode] = useState(null);
   const [address, setAddress] = useState('');
@@ -37,18 +18,8 @@ const NodeForm = () => {
 
   useEffect(() => {
     if (currentUser) {
-        const f = async () => {
-            const master = new TonWeb.utils.Address('EQDiSqUGDaJwY3Tr5Fo8L_oMw7NaR6tJfPT4VSB-Oqw9qbwY');
-            const userAddress = new TonWeb.utils.Address(currentUser.account.address);
-            const cell = new TonWeb.boc.Cell();
-            cell.bits.writeAddress(userAddress);
-            const res = await tonweb.provider.call2(master.toString(), 'get_node_wallet_address', [['tvm.Slice', TonWeb.utils.bytesToBase64(await cell.toBoc(false))]])
-            const nodeAddress = parseAddress(res);
-            const nodeContractData  = await tonweb.provider.call2(nodeAddress.toString(), 'get_wallet_data', []);
-        }
-        
-        f();
-
+        const masterContract = tonClient.open(new MasterContract(Address.parseFriendly('EQDiSqUGDaJwY3Tr5Fo8L_oMw7NaR6tJfPT4VSB-Oqw9qbwY')));
+        masterContract.getNodeWalletAddress();
     //     tonClient.getBalance(currentUser.account.address).then(balance => {
     //         setValue(balance);
     //     });

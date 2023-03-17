@@ -4,15 +4,14 @@ import {ExitIcon, WalletIcon} from '../../assets';
 import {appStore} from '../../stores/appStore';
 import * as styles from './ProfileBadge.module.scss';
 import { CHAIN } from '@tonconnect/sdk';
-// import { Address } from 'ton';
+import { Address } from 'ton';
 
 const ProfileBadge = ({signOut}) => {
   const {currentUser} = appStore;
 
-//   const userFriendlyAddress = Address.parseRaw(currentUser.account.address).toFriendly({ testOnly: currentUser.account.chain === CHAIN.TESTNET });
+  const userFriendlyAddress = Address.parseRaw(currentUser.account.address).toFriendly({ testOnly: currentUser.account.chain === CHAIN.TESTNET });
 
-//   const shortAccountId = userFriendlyAddress.slice(0, 4) + '...' + userFriendlyAddress.slice(-3);
-  const shortAccountId = currentUser.account.address;
+  const shortAccountId = userFriendlyAddress.slice(0, 4) + '...' + userFriendlyAddress.slice(-3);
 
   return (
     <div className={styles.badge}>

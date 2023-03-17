@@ -16,6 +16,10 @@ class AppStore {
     this.tonweb = tonweb;
   }
 
+  setTonClient = (tonClient) => {
+    this.tonClient = tonClient;
+  }
+
 
   loadStats = async () => {
     this.stats = {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <span id="connected-wallet">NO WALLET</span><br>
+        <div id="connect-wallet-block">
+            <button id="connect-wallet">Connect Wallet</button>
+            <div id="qrcode"></div>
+        </div>
+        <div id="transactions" style="display: none">
+            <button id="create-user">Create User Contract</button>
+            <button id="create-node">Create Node Contract</button>
+        </div>
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+        <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+        <script type="module">
+            const spanConnectedWallet = document.getElementById('connected-wallet');
+            const blockConnectWallet = document.getElementById('connect-wallet-block');
+            const buttonConnectWallet = document.getElementById('connect-wallet');
+            const divQrCode = document.getElementById('qrcode');
+
+            const divTransactions = document.getElementById('transactions');
+            const buttonCreateUser = document.getElementById('create-user');
+            const buttonCreateNode = document.getElementById('create-node');
+
+            let isTestnet = true;
+
+            async function main() {
+                const qrcode = new QRCode(divQrCode, {
+                    width : 300,
+                    height : 300
+                });
+
+                const connector = new TonConnectSDK.TonConnect({ manifestUrl: 'https://raw.githubusercontent.com/dTelecom/hack-a-tonx/main/contracts/web/tonconnect-manifest.json' });
+                connector.restoreConnection();
+
+                const unsubscribe = connector.onStatusChange(
+                    walletInfo => {
+                        if (walletInfo) {
+                            blockConnectWallet.style.display = 'none';
+                            divTransactions.style.display = 'block';
+                            let chain = walletInfo.account.chain;
+                            if (chain === TonConnectSDK.CHAIN.TESTNET) {
+                                chain = 'TESTNET';
+                                isTestnet = true;
+                            } else {
+                                chain = 'MAINNET';
+                                isTestnet = false;
+                            }
+                            spanConnectedWallet.textContent = `${chain}:${walletInfo.account.address}`;
+                        } else {
+                            spanConnectedWallet.textContent = 'NO WALLET';
+                            blockConnectWallet.style.display = 'block';
+                            divTransactions.style.display = 'none';
+                            qrcode.clear();
+                            divQrCode.childNodes[1].setAttribute("style", "display:none;"); // https://github.com/davidshimjs/qrcodejs/issues/215
+                        }
+                    } 
+                );
+
+                const walletsList = await connector.getWallets();
+                const walletConnectionSource = walletsList.filter(w => w.jsBridgeKey === 'tonkeeper')
+                    .map(w => ({
+                        universalLink: w.universalLink,
+                        bridgeUrl: w.bridgeUrl
+                    }))
+                    [0];
+
+                buttonConnectWallet.addEventListener('click', () => {
+                    const link = connector.connect(walletConnectionSource);
+                    qrcode.makeCode(link);
+                });
+
+                buttonCreateUser.addEventListener('click', () => {
+
+                });
+
+                buttonCreateNode.addEventListener('click', () => {
+
+                });
+            }
+            main();
+        </script>
+    </body>
+</html>
