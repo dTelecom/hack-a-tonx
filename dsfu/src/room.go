@@ -12,7 +12,6 @@ import (
 	"main/pkg/sfu"
 	"main/pkg/ton"
 	"math"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -592,14 +591,6 @@ func (r *Room) NotifyAndTx(participant *Participant, action string) {
 		Fetch(context.Background())
 	if err != nil {
 		log.Printf("err: %v", err)
-		return
-	}
-
-	message := notifyData.CallID + ":" + strconv.Itoa(notifyData.Duration)
-	verified := ton.VerifyMessage(r.ClientPk, []byte(message), notifyResponse.Signature)
-	if verified != true {
-		log.Printf("not verified signature")
-		r.EndRoom()
 		return
 	}
 
