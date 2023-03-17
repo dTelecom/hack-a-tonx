@@ -147,6 +147,7 @@ func (p *Participant) Handle(ctx context.Context, conn *jsonrpc2.Conn, req *json
 			clientPk = room.ClientPk
 		} else {
 			clientPk, err = ton.GetClientPubKey(token.ClientAddress)
+			log.Printf("GetClientPubKey: %v, %v, %v", token.ClientAddress, clientPk, err)
 			if err != nil {
 				replyError(err)
 				break
